@@ -1,0 +1,61 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* Warm Avenue-Living inspired palette */
+    --background: 60 20% 97%;      /* #FAFAF7 cream */
+    --foreground: 0 0% 10%;        /* #1A1A1A ink */
+    --card: 0 0% 100%;
+    --card-foreground: 0 0% 10%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 0 0% 10%;
+    --primary: 16 88% 55%;         /* #F15A25 flamingo */
+    --primary-foreground: 0 0% 100%;
+    --secondary: 133 100% 13%;     /* #00430E crusoe */
+    --secondary-foreground: 0 0% 100%;
+    --muted: 60 12% 93%;
+    --muted-foreground: 0 0% 42%;
+    --accent: 16 90% 95%;
+    --accent-foreground: 133 100% 13%;
+    --destructive: 0 72% 48%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 0 0% 85%;            /* nobel-ish */
+    --input: 0 0% 85%;
+    --ring: 16 88% 55%;
+    --chart-1: 16 88% 55%;
+    --chart-2: 133 100% 20%;
+    --chart-3: 43 74% 55%;
+    --chart-4: 197 45% 40%;
+    --chart-5: 27 87% 62%;
+    --radius: 0.9rem;
+    --sidebar-background: 60 20% 98%;
+    --sidebar-foreground: 0 0% 26%;
+    --sidebar-primary: 133 100% 13%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 16 90% 95%;
+    --sidebar-accent-foreground: 133 100% 13%;
+    --sidebar-border: 0 0% 88%;
+    --sidebar-ring: 16 88% 55%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+  .no-scrollbar::-webkit-scrollbar { display: none; }
+  .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+}
