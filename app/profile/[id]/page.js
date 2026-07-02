@@ -1,10 +1,11 @@
 'use client'
 import { useEffect, useState } from 'react'
 import { useParams, useRouter } from 'next/navigation'
-import { MapPin, CalendarDays, Star, UserPlus, ArrowLeft, Loader2, Lock, ShieldCheck } from 'lucide-react'
+import { MapPin, CalendarDays, Star, UserPlus, ArrowLeft, Loader2, Lock, ShieldCheck, MessageCircle } from 'lucide-react'
 import { AppShell } from '@/components/AppShell'
 import { HobbyChip } from '@/components/HobbyChip'
 import { ReportDialog } from '@/components/ReportDialog'
+import { SayHelloDialog } from '@/components/SayHelloDialog'
 import { MotionFade } from '@/components/MotionFade'
 import { EmptyState } from '@/components/EmptyState'
 import { Card, CardContent } from '@/components/ui/card'
@@ -19,6 +20,7 @@ function ProfileInner() {
   const router = useRouter()
   const id = params?.id
   const [state, setState] = useState({ loading: true, data: null, error: null })
+  const [helloOpen, setHelloOpen] = useState(false)
 
   useEffect(() => {
     if (!id) return
@@ -66,9 +68,14 @@ function ProfileInner() {
               {!isSelf ? (
                 <div className="flex items-center gap-2">
                   {!isStaff ? (
-                    <Button className="bg-flamingo hover:bg-flamingo/90 rounded-xl" onClick={() => toast.success(`Connection request sent to ${resident.firstName}.`)}>
-                      <UserPlus className="h-4 w-4 mr-1.5" /> Send connection request
-                    </Button>
+                    <>
+                      <Button className="bg-flamingo hover:bg-flamingo/90 rounded-xl" onClick={() => toast.success(`Connection request sent to ${resident.firstName}.`)}>
+                        <UserPlus className="h-4 w-4 mr-1.5" /> Send connection request
+                      </Button>
+                      <Button variant="outline" className="rounded-xl border-nobel/50 hover:border-flamingo hover:text-flamingo" onClick={() => setHelloOpen(true)}>
+                        <MessageCircle className="h-4 w-4 mr-1.5" /> Say hello
+                      </Button>
+                    </>
                   ) : null}
                   <ReportDialog reportedUserId={resident.id} label="Report user" />
                 </div>
@@ -101,6 +108,8 @@ function ProfileInner() {
           ) : null}
         </CardContent>
       </Card>
+
+      <SayHelloDialog open={helloOpen} onOpenChange={setHelloOpen} resident={{ ...resident, photoUrl: profile?.photoUrl }} />
     </MotionFade>
   )
 }
