@@ -8,6 +8,7 @@ import { ConsentBanner } from '@/components/ConsentBanner'
 import { EmptyState } from '@/components/EmptyState'
 import { HobbyChip } from '@/components/HobbyChip'
 import { MotionFade } from '@/components/MotionFade'
+import { SayHelloDialog } from '@/components/SayHelloDialog'
 import { Card, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar'
@@ -18,6 +19,7 @@ const fmtDate = (d) => d ? new Date(d).toLocaleDateString('en-CA', { weekday: 's
 function DashboardInner() {
   const [me, setMe] = useState(null)
   const [data, setData] = useState(null)
+  const [hello, setHello] = useState(null)
 
   useEffect(() => {
     fetch('/api/me', { credentials: 'include' }).then(r => r.json()).then(setMe)
@@ -89,7 +91,7 @@ function DashboardInner() {
                     </div>
                     <p className="mt-3 text-sm text-muted-foreground line-clamp-2">{n.bio}</p>
                     <div className="mt-3 flex flex-wrap gap-1">{(n.hobbies || []).slice(0, 3).map(h => <HobbyChip key={h} label={h} size="sm" />)}</div>
-                    <Button asChild variant="outline" className="mt-4 w-full rounded-xl"><Link href={`/profile/${n.id}`}>Say hello</Link></Button>
+                    <Button onClick={() => setHello(n)} variant="outline" className="mt-4 w-full rounded-xl hover:border-flamingo hover:text-flamingo">Say hello</Button>
                   </CardContent>
                 </Card>
               </CarouselItem>
@@ -124,6 +126,8 @@ function DashboardInner() {
           ))}
         </div>
       )}
+
+      <SayHelloDialog open={!!hello} onOpenChange={(o) => !o && setHello(null)} resident={hello} />
     </>
   )
 }
