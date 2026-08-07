@@ -809,14 +809,536 @@ def test_dashboard():
     print("\n✅ DASHBOARD: PASSED")
     return True
 
+def test_phase3_sso_roles():
+    """Test 13: Phase 3 SSO for RESIDENT/APM/RPM roles"""
+    print("\n" + "="*80)
+    print("TEST 13: PHASE 3 SSO ROLES (RESIDENT/APM/RPM)")
+    print("="*80)
+    
+    # Test RESIDENT login
+    print("\n[13.1] Testing RESIDENT login...")
+    resident = TestSession("RESIDENT")
+    if not resident.login("RESIDENT"):
+        return False
+    
+    # Verify session
+    try:
+        resp = resident.get("/auth/session")
+        if resp.status_code == 200:
+            data = resp.json()
+            user = data.get('user')
+            if user and user.get('role') == 'RESIDENT':
+                print(f"✅ RESIDENT session: {user['firstName']} {user['lastName']} (role={user['role']})")
+                if user.get('propertyId'):
+                    print(f"   propertyId: {user['propertyId']}")
+                else:
+                    print(f"❌ RESIDENT should have propertyId")
+                    return False
+            else:
+                print(f"❌ RESIDENT session invalid: {data}")
+                return False
+        else:
+            print(f"❌ Session check failed: {resp.status_code}")
+            return False
+    except Exception as e:
+        print(f"❌ Error: {e}")
+        return False
+    
+    # Test APM login
+    print("\n[13.2] Testing APM login...")
+    apm = TestSession("APM")
+    if not apm.login("APM"):
+        return False
+    
+    try:
+        resp = apm.get("/auth/session")
+        if resp.status_code == 200:
+            data = resp.json()
+            user = data.get('user')
+            if user and user.get('role') == 'APM':
+                print(f"✅ APM session: {user['firstName']} {user['lastName']} (role={user['role']})")
+                if user.get('propertyId'):
+                    print(f"   propertyId: {user['propertyId']}")
+                else:
+                    print(f"❌ APM should have propertyId")
+                    return False
+            else:
+                print(f"❌ APM session invalid: {data}")
+                return False
+        else:
+            print(f"❌ Session check failed: {resp.status_code}")
+            return False
+    except Exception as e:
+        print(f"❌ Error: {e}")
+        return False
+    
+    # Test RPM login
+    print("\n[13.3] Testing RPM login...")
+    rpm = TestSession("RPM")
+    if not rpm.login("RPM"):
+        return False
+    
+    try:
+        resp = rpm.get("/auth/session")
+        if resp.status_code == 200:
+            data = resp.json()
+            user = data.get('user')
+            property_data = data.get('property')
+            if user and user.get('role') == 'RPM':
+                print(f"✅ RPM session: {user['firstName']} {user['lastName']} (role={user['role']})")
+                # RPM should have propertyId null
+                if user.get('propertyId') is None:
+                    print(f"✅ RPM propertyId is null (as expected)")
+                else:
+                    print(f"❌ RPM should have propertyId=null, got: {user.get('propertyId')}")
+                    return False
+                # property should also be null
+                if property_data is None:
+                    print(f"✅ RPM property is null (as expected)")
+                else:
+                    print(f"⚠️  RPM property should be null, got: {property_data}")
+            else:
+                print(f"❌ RPM session invalid: {data}")
+                return False
+        else:
+            print(f"❌ Session check failed: {resp.status_code}")
+            return False
+    except Exception as e:
+        print(f"❌ Error: {e}")
+        return False
+    
+    print("\n✅ PHASE 3 SSO ROLES: PASSED")
+    return True
+
+def test_phase3_role_guards():
+    """Test 14: Phase 3 role guards for APM/RPM endpoints"""
+    print("\n" + "="*80)
+    print("TEST 14: PHASE 3 ROLE GUARDS")
+    print("="*80)
+    
+    resident = TestSession("RESIDENT")
+    apm = TestSession("APM")
+    rpm = TestSession("RPM")
+    
+    if not resident.login("RESIDENT") or not apm.login("APM") or not rpm.login("RPM"):
+        return False
+    
+    # Test RESIDENT blocked from RPM endpoints
+    print("\n[14.1] Testing RESIDENT blocked from /api/rpm/overview...")
+    try:
+        resp = resident.get("/rpm/overview")
+        if resp.status_code == 403:
+            print("✅ RESIDENT correctly blocked from /api/rpm/overview (403)")
+        else:
+            print(f"❌ Expected 403, got {resp.status_code}: {resp.text}")
+            return False
+    except Exception as e:
+        print(f"❌ Error: {e}")
+        return False
+    
+    # Test RESIDENT blocked from APM endpoints
+    print("\n[14.2] Testing RESIDENT blocked from /api/apm/overview...")
+    try:
+        resp = resident.get("/apm/overview")
+        if resp.status_code == 403:
+            print("✅ RESIDENT correctly blocked from /api/apm/overview (403)")
+        else:
+            print(f"❌ Expected 403, got {resp.status_code}: {resp.text}")
+            return False
+    except Exception as e:
+        print(f"❌ Error: {e}")
+        return False
+    
+    # Test APM blocked from RPM endpoints
+    print("\n[14.3] Testing APM blocked from /api/rpm/overview...")
+    try:
+        resp = apm.get("/rpm/overview")
+        if resp.status_code == 403:
+            print("✅ APM correctly blocked from /api/rpm/overview (403)")
+        else:
+            print(f"❌ Expected 403, got {resp.status_code}: {resp.text}")
+            return False
+    except Exception as e:
+        print(f"❌ Error: {e}")
+        return False
+    
+    # Test RPM blocked from APM endpoints
+    print("\n[14.4] Testing RPM blocked from /api/apm/overview...")
+    try:
+        resp = rpm.get("/apm/overview")
+        if resp.status_code == 403:
+            print("✅ RPM correctly blocked from /api/apm/overview (403)")
+        else:
+            print(f"❌ Expected 403, got {resp.status_code}: {resp.text}")
+            return False
+    except Exception as e:
+        print(f"❌ Error: {e}")
+        return False
+    
+    # Test unauthenticated access
+    print("\n[14.5] Testing unauthenticated access to /api/rpm/overview...")
+    try:
+        resp = requests.get(f"{BASE_URL}/rpm/overview", timeout=10)
+        if resp.status_code == 401:
+            print("✅ Unauthenticated request to /api/rpm/overview returns 401")
+        else:
+            print(f"❌ Expected 401, got {resp.status_code}")
+            return False
+    except Exception as e:
+        print(f"❌ Error: {e}")
+        return False
+    
+    print("\n[14.6] Testing unauthenticated access to /api/apm/overview...")
+    try:
+        resp = requests.get(f"{BASE_URL}/apm/overview", timeout=10)
+        if resp.status_code == 401:
+            print("✅ Unauthenticated request to /api/apm/overview returns 401")
+        else:
+            print(f"❌ Expected 401, got {resp.status_code}")
+            return False
+    except Exception as e:
+        print(f"❌ Error: {e}")
+        return False
+    
+    print("\n✅ PHASE 3 ROLE GUARDS: PASSED")
+    return True
+
+def test_phase3_rpm_overview():
+    """Test 15: RPM overview with managed APMs"""
+    print("\n" + "="*80)
+    print("TEST 15: RPM OVERVIEW")
+    print("="*80)
+    
+    rpm = TestSession("RPM")
+    if not rpm.login("RPM"):
+        return False
+    
+    print("\n[15.1] Getting RPM overview...")
+    try:
+        resp = rpm.get("/rpm/overview")
+        if resp.status_code != 200:
+            print(f"❌ RPM overview failed: {resp.status_code} - {resp.text}")
+            return False
+        
+        data = resp.json()
+        stats = data.get('stats', {})
+        apms = data.get('apms', [])
+        rpm_info = data.get('rpm', {})
+        
+        print(f"   RPM: {rpm_info.get('name')}")
+        print(f"   Total APMs: {stats.get('totalApms')}")
+        print(f"   Total Viewings: {stats.get('totalViewings')}")
+        print(f"   Viewings This Month: {stats.get('viewingsThisMonth')}")
+        print(f"   Team Avg Overall: {stats.get('teamAvgOverall')}")
+        
+        # Verify totalApms === 3
+        if stats.get('totalApms') == 3:
+            print(f"✅ totalApms is 3 (as expected)")
+        else:
+            print(f"❌ Expected totalApms=3, got {stats.get('totalApms')}")
+            return False
+        
+        # Verify apms array length
+        if len(apms) == 3:
+            print(f"✅ apms array has 3 entries")
+        else:
+            print(f"❌ Expected 3 APMs in array, got {len(apms)}")
+            return False
+        
+        # Verify each APM has required fields
+        print("\n[15.2] Verifying APM structure...")
+        needs_attention_count = 0
+        for i, apm in enumerate(apms):
+            print(f"\n   APM {i+1}: {apm.get('name')} ({apm.get('propertyName')})")
+            print(f"      Overall: {apm.get('overall')}, Viewings: {apm.get('viewings')}, Needs Attention: {apm.get('needsAttention')}")
+            
+            # Check categories
+            categories = apm.get('categories', {})
+            required_cats = ['friendliness', 'professionalism', 'knowledge', 'communication', 'overallExperience']
+            for cat in required_cats:
+                if cat not in categories:
+                    print(f"❌ Missing category '{cat}' in APM {apm.get('name')}")
+                    return False
+                # Verify it's a number between 0-5
+                val = categories[cat]
+                if not isinstance(val, (int, float)) or val < 0 or val > 5:
+                    print(f"❌ Category '{cat}' has invalid value: {val} (should be 0-5)")
+                    return False
+            
+            print(f"      Categories: {categories}")
+            
+            # Check needsAttention flag
+            overall = apm.get('overall', 0)
+            expected_needs_attention = overall > 0 and overall < 3.5
+            if apm.get('needsAttention') == expected_needs_attention:
+                print(f"      ✅ needsAttention flag correct ({expected_needs_attention})")
+            else:
+                print(f"      ❌ needsAttention should be {expected_needs_attention}, got {apm.get('needsAttention')}")
+                return False
+            
+            if apm.get('needsAttention'):
+                needs_attention_count += 1
+            
+            # Verify no raw ObjectId (ids should be strings)
+            if 'id' in apm and not isinstance(apm['id'], str):
+                print(f"❌ APM id should be string, got {type(apm['id'])}")
+                return False
+        
+        # Verify exactly 2 APMs have needsAttention === true
+        print(f"\n[15.3] Verifying needsAttention count...")
+        if needs_attention_count == 2:
+            print(f"✅ Exactly 2 APMs have needsAttention=true")
+        else:
+            print(f"❌ Expected 2 APMs with needsAttention=true, got {needs_attention_count}")
+            return False
+        
+    except Exception as e:
+        print(f"❌ Error: {e}")
+        import traceback
+        traceback.print_exc()
+        return False
+    
+    print("\n✅ RPM OVERVIEW: PASSED")
+    return True
+
+def test_phase3_rpm_apm_detail():
+    """Test 16: RPM->APM detail with manage-scope guard"""
+    print("\n" + "="*80)
+    print("TEST 16: RPM->APM DETAIL")
+    print("="*80)
+    
+    rpm = TestSession("RPM")
+    if not rpm.login("RPM"):
+        return False
+    
+    # Get RPM overview to find managed APM IDs
+    print("\n[16.1] Getting managed APM IDs from overview...")
+    try:
+        resp = rpm.get("/rpm/overview")
+        if resp.status_code != 200:
+            print(f"❌ RPM overview failed: {resp.status_code}")
+            return False
+        
+        data = resp.json()
+        apms = data.get('apms', [])
+        
+        if len(apms) == 0:
+            print("❌ No APMs found in overview")
+            return False
+        
+        managed_apm_id = apms[0]['id']
+        print(f"   Testing with managed APM: {apms[0]['name']} (ID: {managed_apm_id})")
+        
+        # Test access to managed APM
+        print("\n[16.2] Testing access to managed APM...")
+        resp = rpm.get(f"/rpm/apm/{managed_apm_id}")
+        if resp.status_code != 200:
+            print(f"❌ Managed APM access failed: {resp.status_code} - {resp.text}")
+            return False
+        
+        detail_data = resp.json()
+        apm_info = detail_data.get('apm', {})
+        categories = detail_data.get('categories', {})
+        overall = detail_data.get('overall')
+        count = detail_data.get('count')
+        feedback = detail_data.get('feedback', [])
+        
+        print(f"✅ Managed APM access: 200 OK")
+        print(f"   APM: {apm_info.get('name')} ({apm_info.get('propertyName')})")
+        print(f"   Overall: {overall}, Count: {count}")
+        print(f"   Categories: {categories}")
+        print(f"   Feedback entries: {len(feedback)}")
+        
+        # Verify count is around 12 (as mentioned in review request)
+        if count >= 10 and count <= 15:
+            print(f"✅ Feedback count is reasonable (~12): {count}")
+        else:
+            print(f"⚠️  Feedback count is {count} (expected ~12)")
+        
+        # Verify categories structure
+        required_cats = ['friendliness', 'professionalism', 'knowledge', 'communication', 'overallExperience']
+        for cat in required_cats:
+            if cat not in categories:
+                print(f"❌ Missing category '{cat}'")
+                return False
+        print(f"✅ All 5 categories present")
+        
+        # Verify feedback structure
+        if len(feedback) > 0:
+            fb = feedback[0]
+            required_fields = ['prospectName', 'scores', 'comment', 'createdAt']
+            for field in required_fields:
+                if field not in fb:
+                    print(f"❌ Missing field '{field}' in feedback entry")
+                    return False
+            
+            # Verify scores has 5 fields
+            scores = fb.get('scores', {})
+            for cat in required_cats:
+                if cat not in scores:
+                    print(f"❌ Missing score '{cat}' in feedback entry")
+                    return False
+            
+            print(f"✅ Feedback structure valid")
+            print(f"   Sample: {fb['prospectName']} - {fb['scores']}")
+        
+        # Test bogus ID (404)
+        print("\n[16.3] Testing bogus APM ID (should return 400/404)...")
+        resp = rpm.get("/rpm/apm/000000000000000000000000")
+        if resp.status_code in [400, 404]:
+            print(f"✅ Bogus ID returns {resp.status_code}")
+        else:
+            print(f"❌ Expected 400/404 for bogus ID, got {resp.status_code}")
+            return False
+        
+        # Test invalid ID format (400)
+        print("\n[16.4] Testing invalid APM ID format (should return 400)...")
+        resp = rpm.get("/rpm/apm/invalid-id")
+        if resp.status_code == 400:
+            print(f"✅ Invalid ID format returns 400")
+        else:
+            print(f"⚠️  Expected 400 for invalid ID format, got {resp.status_code}")
+        
+        # Note: Testing cross-manage 403 is difficult without knowing the other RPM's managed APM IDs
+        # The seed creates 6 APMs total, Priya manages 3, so there are 3 others
+        # But we can't easily enumerate them via API
+        print("\n[16.5] Cross-manage 403 test: Skipped (would need other RPM's managed APM IDs)")
+        print("   Note: The handler does check managedByRpmId and returns 403 for non-managed APMs")
+        
+    except Exception as e:
+        print(f"❌ Error: {e}")
+        import traceback
+        traceback.print_exc()
+        return False
+    
+    print("\n✅ RPM->APM DETAIL: PASSED")
+    return True
+
+def test_phase3_apm_overview():
+    """Test 17: APM overview with building-isolated resident aggregation"""
+    print("\n" + "="*80)
+    print("TEST 17: APM OVERVIEW")
+    print("="*80)
+    
+    apm = TestSession("APM")
+    if not apm.login("APM"):
+        return False
+    
+    print("\n[17.1] Getting APM overview...")
+    try:
+        resp = apm.get("/apm/overview")
+        if resp.status_code != 200:
+            print(f"❌ APM overview failed: {resp.status_code} - {resp.text}")
+            return False
+        
+        data = resp.json()
+        apm_info = data.get('apm', {})
+        performance = data.get('performance', {})
+        recent = data.get('recent', [])
+        residents = data.get('residents', {})
+        
+        print(f"   APM: {apm_info.get('name')} ({apm_info.get('propertyName')})")
+        print(f"   Performance:")
+        print(f"      Count: {performance.get('count')}")
+        print(f"      Overall: {performance.get('overall')}")
+        print(f"      Categories: {performance.get('categories')}")
+        print(f"      Best: {performance.get('best')}")
+        print(f"      Worst: {performance.get('worst')}")
+        print(f"   Recent feedback: {len(recent)} entries")
+        print(f"   Residents:")
+        print(f"      Total: {residents.get('total')}")
+        print(f"      Top Interests: {len(residents.get('topInterests', []))} items")
+        print(f"      Top Hobbies: {len(residents.get('topHobbies', []))} items")
+        print(f"      Suggested Themes: {len(residents.get('suggestedThemes', []))} items")
+        
+        # Verify building isolation: residents.total should be 8 for Bow River Lofts
+        total_residents = residents.get('total', 0)
+        if total_residents == 8:
+            print(f"✅ Building isolation: residents.total = 8 (Bow River Lofts)")
+        else:
+            print(f"❌ Expected residents.total=8 for Bow River Lofts, got {total_residents}")
+            return False
+        
+        # Verify topInterests counts don't exceed residents.total
+        top_interests = residents.get('topInterests', [])
+        for interest in top_interests:
+            if interest.get('count', 0) > total_residents:
+                print(f"❌ Interest count exceeds total residents: {interest}")
+                return False
+        print(f"✅ All interest counts <= residents.total")
+        
+        # Verify suggestedThemes length <= 3
+        suggested_themes = residents.get('suggestedThemes', [])
+        if len(suggested_themes) <= 3:
+            print(f"✅ suggestedThemes length <= 3: {len(suggested_themes)}")
+        else:
+            print(f"❌ suggestedThemes length should be <= 3, got {len(suggested_themes)}")
+            return False
+        
+        # Verify each theme has tag, pct, suggestion
+        for theme in suggested_themes:
+            if 'tag' not in theme or 'pct' not in theme or 'suggestion' not in theme:
+                print(f"❌ Theme missing required fields: {theme}")
+                return False
+            print(f"   Theme: {theme['tag']} ({theme['pct']}%) - {theme['suggestion']}")
+        
+        if len(suggested_themes) > 0:
+            print(f"✅ All themes have required fields (tag, pct, suggestion)")
+        
+        # Verify performance categories
+        categories = performance.get('categories', {})
+        required_cats = ['friendliness', 'professionalism', 'knowledge', 'communication', 'overallExperience']
+        for cat in required_cats:
+            if cat not in categories:
+                print(f"❌ Missing category '{cat}'")
+                return False
+        print(f"✅ All 5 performance categories present")
+        
+        # Verify best/worst structure
+        best = performance.get('best', {})
+        worst = performance.get('worst', {})
+        if 'key' in best and 'label' in best and 'value' in best:
+            print(f"✅ Best category: {best['label']} = {best['value']}")
+        else:
+            print(f"❌ Best category missing fields: {best}")
+            return False
+        
+        if 'key' in worst and 'label' in worst and 'value' in worst:
+            print(f"✅ Worst category: {worst['label']} = {worst['value']}")
+        else:
+            print(f"❌ Worst category missing fields: {worst}")
+            return False
+        
+        # Verify recent feedback (<=8)
+        if len(recent) <= 8:
+            print(f"✅ Recent feedback <= 8: {len(recent)}")
+        else:
+            print(f"❌ Recent feedback should be <= 8, got {len(recent)}")
+            return False
+        
+        # Verify no raw ObjectId
+        if 'id' in apm_info and not isinstance(apm_info['id'], str):
+            print(f"❌ APM id should be string, got {type(apm_info['id'])}")
+            return False
+        
+    except Exception as e:
+        print(f"❌ Error: {e}")
+        import traceback
+        traceback.print_exc()
+        return False
+    
+    print("\n✅ APM OVERVIEW: PASSED")
+    return True
+
 def main():
     """Run all tests"""
     print("\n" + "="*80)
-    print("RESIDENT HUB PHASE 1 - BACKEND API TESTS")
+    print("RESIDENT HUB - BACKEND API TESTS (PHASE 1 + PHASE 3)")
     print("="*80)
     print(f"Base URL: {BASE_URL}")
     
     tests = [
+        # Phase 1 tests
         ("Auth Flow", test_auth_flow),
         ("Role Enforcement", test_role_enforcement),
         ("Building Isolation (Discover)", test_discover_building_isolation),
@@ -829,6 +1351,12 @@ def main():
         ("Staff Reports + Privacy", test_staff_reports),
         ("Staff Reports PATCH", test_staff_reports_patch),
         ("Dashboard", test_dashboard),
+        # Phase 3 tests
+        ("Phase 3: SSO Roles", test_phase3_sso_roles),
+        ("Phase 3: Role Guards", test_phase3_role_guards),
+        ("Phase 3: RPM Overview", test_phase3_rpm_overview),
+        ("Phase 3: RPM->APM Detail", test_phase3_rpm_apm_detail),
+        ("Phase 3: APM Overview", test_phase3_apm_overview),
     ]
     
     results = []

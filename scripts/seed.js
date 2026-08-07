@@ -32,7 +32,7 @@ async function main() {
   console.log('Connected to', process.env.DB_NAME)
 
   // ---- reset ----
-  for (const c of ['properties', 'users', 'userProfiles', 'connections', 'messages', 'reports', 'eventIdeas']) {
+  for (const c of ['properties', 'users', 'userProfiles', 'connections', 'messages', 'reports', 'eventIdeas', 'viewingFeedback']) {
     await db.collection(c).deleteMany({})
   }
 
@@ -319,30 +319,72 @@ async function main() {
     })
   }
 
-  // ---- staff ----
-  const S = [
-    { p: 0, email: 'demo.staff@residenthub.ca', firstName: 'Sarah', lastName: 'Mitchell', img: 48 },
-    { p: 1, email: 'david.chen@residenthub.ca', firstName: 'David', lastName: 'Chen', img: 59 },
-    { p: 2, email: 'rachel.nguyen@residenthub.ca', firstName: 'Rachel', lastName: 'Nguyen', img: 45 },
+  // ---- property management hierarchy: RPMs + APMs ----
+  const rpmDefs = [
+    { email: 'demo.rpm@residenthub.ca', firstName: 'Priya', lastName: 'Sharma', img: 31 },
+    { email: 'marcus.leblanc@residenthub.ca', firstName: 'Marcus', lastName: 'Leblanc', img: 52 },
   ]
-  const sid = []
-  for (const s of S) {
-    const _id = new ObjectId()
-    sid.push(_id)
-    users.push({
-      _id, propertyId: P[s.p], email: s.email, passwordHash: 'demo',
-      firstName: s.firstName, lastName: s.lastName, unitNumber: 'Staff',
-      isOpenToMeeting: false, role: 'STAFF', createdAt: daysAgo(200),
-      chatScript: null,
-    })
-    profiles.push({
-      _id: new ObjectId(), userId: _id, bio: 'Community manager', hobbies: [], interests: [],
-      photoUrl: `https://i.pravatar.cc/400?img=${s.img}`, moveInDate: daysAgo(200), favoriteSpotInBuilding: 'Front office',
-    })
+  const rpmIds = []
+  for (const r of rpmDefs) {
+    const _id = new ObjectId(); rpmIds.push(_id)
+    users.push({ _id, propertyId: null, email: r.email, passwordHash: 'demo', firstName: r.firstName, lastName: r.lastName, unitNumber: 'Regional office', isOpenToMeeting: false, role: 'RPM', managedByRpmId: null, createdAt: daysAgo(220), chatScript: null })
+    profiles.push({ _id: new ObjectId(), userId: _id, bio: 'Regional Property Manager', hobbies: [], interests: [], photoUrl: `https://i.pravatar.cc/400?img=${r.img}`, moveInDate: daysAgo(220), favoriteSpotInBuilding: 'Regional office' })
   }
+
+  // APMs: 2 per property, 3 per RPM. target = desired overall average.
+  const apmDefs = [
+    { email: 'demo.apm@residenthub.ca',      firstName: 'Sarah',  lastName: 'Mitchell', img: 48, p: 0, rpm: 0, target: 4.6 },
+    { email: 'david.chen@residenthub.ca',    firstName: 'David',  lastName: 'Chen',     img: 59, p: 0, rpm: 1, target: 4.4 },
+    { email: 'rachel.nguyen@residenthub.ca', firstName: 'Rachel', lastName: 'Nguyen',   img: 45, p: 1, rpm: 0, target: 3.2 },
+    { email: 'tyler.brooks@residenthub.ca',  firstName: 'Tyler',  lastName: 'Brooks',   img: 12, p: 1, rpm: 1, target: 4.3 },
+    { email: 'megan.oconnor@residenthub.ca', firstName: 'Megan',  lastName: "O'Connor", img: 24, p: 2, rpm: 0, target: 3.3 },
+    { email: 'aisha.patel@residenthub.ca',   firstName: 'Aisha',  lastName: 'Patel',    img: 27, p: 2, rpm: 1, target: 4.8 },
+  ]
+  const apmMeta = []
+  for (const a of apmDefs) {
+    const _id = new ObjectId(); apmMeta.push({ id: _id, p: a.p, target: a.target })
+    users.push({ _id, propertyId: P[a.p], email: a.email, passwordHash: 'demo', firstName: a.firstName, lastName: a.lastName, unitNumber: 'Leasing office', isOpenToMeeting: false, role: 'APM', managedByRpmId: rpmIds[a.rpm], createdAt: daysAgo(210), chatScript: null })
+    profiles.push({ _id: new ObjectId(), userId: _id, bio: 'Assistant Property Manager', hobbies: [], interests: [], photoUrl: `https://i.pravatar.cc/400?img=${a.img}`, moveInDate: daysAgo(210), favoriteSpotInBuilding: 'Leasing office' })
+  }
+
+  // Keep existing event/report references working: one APM id per property index.
+  const sid = [
+    apmMeta.find(m => m.p === 0).id,
+    apmMeta.find(m => m.p === 1).id,
+    apmMeta.find(m => m.p === 2).id,
+  ]
 
   await db.collection('users').insertMany(users)
   await db.collection('userProfiles').insertMany(profiles)
+
+  // ---- viewing feedback (mock prospective-tenant ratings) ----
+  const prospectNames = ['Jordan Blackwood', 'Chloe Fontaine', 'Aiden Wong', 'Maya Desjardins', 'Ethan Reid', 'Priya Kaur', 'Liam Fraser', 'Sofia Marchetti', 'Nathan Boucher', 'Grace Kim', 'Owen Sinclair', 'Hannah Leblanc', 'Dylan Chretien', 'Zoe Armstrong', 'Cole Tremblay', 'Ruby Nakamura', 'Aaron Gill', 'Layla Haddad', 'Spencer Reid', 'Nora Bergeron']
+  const goodComments = ['So warm and welcoming — felt like home right away.', 'Answered every question about the building. Super knowledgeable.', 'Professional and friendly, made the tour easy.', 'Great communicator, followed up the same day.', 'Really lovely experience, no pressure at all.', 'Knew the neighbourhood inside out. Impressed!']
+  const midComments = ['Nice enough, but felt a little rushed.', 'Friendly, though I had to follow up a couple times.', 'Good tour overall, a few questions went unanswered.', 'Pleasant, but communication could be tighter.']
+  const lowComments = ['Felt rushed and hard to reach afterwards.', 'Seemed unprepared for my questions.', 'Communication was slow — took days to reply.', 'Polite but not very informative about the suite.']
+  const clamp5 = (n) => Math.max(1, Math.min(5, n))
+  const genScore = (t) => clamp5(Math.round(t + (Math.random() * 1.4 - 0.7)))
+  const feedbackDocs = []
+  apmMeta.forEach((m) => {
+    for (let i = 0; i < 12; i++) {
+      const scores = {
+        friendliness: genScore(m.target + 0.2),
+        professionalism: genScore(m.target),
+        knowledge: genScore(m.target - 0.1),
+        communication: genScore(m.target - (m.target < 3.5 ? 0.4 : 0)),
+        overallExperience: genScore(m.target),
+      }
+      const avg = (scores.friendliness + scores.professionalism + scores.knowledge + scores.communication + scores.overallExperience) / 5
+      const pool = avg >= 4 ? goodComments : avg >= 3.4 ? midComments : lowComments
+      feedbackDocs.push({
+        _id: new ObjectId(), apmId: m.id, propertyId: P[m.p],
+        prospectName: prospectNames[(i + m.p * 3) % prospectNames.length],
+        scores, comment: pool[Math.floor(Math.random() * pool.length)],
+        createdAt: daysAgo(Math.floor(Math.random() * 90)),
+      })
+    }
+  })
+  await db.collection('viewingFeedback').insertMany(feedbackDocs)
 
   // ---- connections ----
   const accepted = [
@@ -440,8 +482,12 @@ async function main() {
   await db.collection('connections').createIndex({ userAId: 1, userBId: 1 }, { unique: true })
   await db.collection('messages').createIndex({ connectionId: 1, timestamp: -1 })
   await db.collection('reports').createIndex({ status: 1, createdAt: -1 })
+  await db.collection('users').createIndex({ managedByRpmId: 1 })
+  await db.collection('viewingFeedback').createIndex({ apmId: 1, createdAt: -1 })
 
-  console.log(`Seeded: ${props.length} properties, ${users.length} users (${R.length} residents + ${S.length} staff), ${connDocs.length} connections, ${msgDocs.length} messages, ${reports.length} reports, ${events.length} events. chatScript added to all ${R.length} residents.`)
+  console.log(`Seeded management: ${rpmDefs.length} RPMs, ${apmDefs.length} APMs, ${feedbackDocs.length} viewing feedback entries.`)
+
+  console.log(`Seeded: ${props.length} properties, ${users.length} users (${R.length} residents + ${rpmDefs.length} RPMs + ${apmDefs.length} APMs), ${connDocs.length} connections, ${msgDocs.length} messages, ${reports.length} reports, ${events.length} events. chatScript added to all ${R.length} residents.`)
   await client.close()
   process.exit(0)
 }

@@ -16,11 +16,15 @@ const NAV = {
     { href: '/dashboard', label: 'Dashboard' },
     { href: '/discover', label: 'Discover' },
   ],
-  STAFF: [
-    { href: '/staff', label: 'Overview' },
-    { href: '/staff/reports', label: 'Reports' },
+  APM: [
+    { href: '/apm', label: 'My Dashboard' },
+  ],
+  RPM: [
+    { href: '/rpm', label: 'Regional' },
   ],
 }
+
+const homeFor = (r) => (r === 'RPM' ? '/rpm' : r === 'APM' ? '/apm' : '/dashboard')
 
 export function AppShell({ requireRole, children }) {
   const router = useRouter()
@@ -36,7 +40,7 @@ export function AppShell({ requireRole, children }) {
         if (!active) return
         if (!data.user) { router.replace('/login'); return }
         if (requireRole && data.user.role !== requireRole) {
-          router.replace(data.user.role === 'STAFF' ? '/staff' : '/dashboard')
+          router.replace(homeFor(data.user.role))
           return
         }
         setState({ loading: false, user: data.user, property: data.property })
@@ -62,7 +66,7 @@ export function AppShell({ requireRole, children }) {
 
   const { user, property } = state
   const nav = NAV[user.role] || []
-  const homeHref = user.role === 'STAFF' ? '/staff' : '/dashboard'
+  const homeHref = homeFor(user.role)
   const initials = `${user.firstName?.[0] || ''}${user.lastName?.[0] || ''}`
 
   return (
@@ -92,9 +96,9 @@ export function AppShell({ requireRole, children }) {
             </nav>
           </div>
           <div className="flex items-center gap-3">
-            {user.role === 'STAFF' ? (
+            {user.role === 'APM' || user.role === 'RPM' ? (
               <span className="hidden sm:inline-flex items-center gap-1 text-xs font-semibold text-secondary bg-secondary/10 px-2.5 py-1 rounded-full">
-                <ShieldCheck className="h-3.5 w-3.5" /> Staff
+                <ShieldCheck className="h-3.5 w-3.5" /> {user.role === 'RPM' ? 'Regional PM' : 'Assistant PM'}
               </span>
             ) : null}
             <DropdownMenu>
