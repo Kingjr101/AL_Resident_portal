@@ -299,6 +299,79 @@ async function main() {
         closer: "Morning hike or rooftop yoga — either way, Willow and I would love the company 🌄",
       },
     },
+        // ---- extra residents for richer hobby/interest data ----
+    {
+      p: 0, email: 'ethan.walsh@example.ca', firstName: 'Ethan', lastName: 'Walsh', unit: '308', img: 3, open: true, moveIn: '2025-02-14', spot: 'Café corner',
+      bio: 'Coffee snob and weekend hiker. Training for my first half-marathon.',
+      hobbies: ['coffee', 'hiking', 'running', 'fitness'], interests: ['outdoors', 'wellness', 'fitness'],
+      chat: { greeting: "Hey! 👋 New here — where's the good coffee at?", quickReplies: [ { label: "Favourite trail nearby?", response: "Prairie Mountain if I've got the legs for it. You hike?" }, { label: "Training for anything?", response: "Half-marathon in spring. Currently questioning every life choice 😅" }, { label: "Best coffee spot?", response: "Rosso, hands down. I'm there most mornings ☕" } ], closer: "Let's grab a coffee then maybe a trail run — my kind of weekend!" },
+    },
+    {
+      p: 0, email: 'chloe.martin@example.ca', firstName: 'Chloe', lastName: 'Martin', unit: '415', img: 24, open: true, moveIn: '2025-04-08', spot: 'Yoga studio',
+      bio: 'Yoga teacher, coffee lover, always cooking something new.',
+      hobbies: ['yoga', 'coffee', 'cooking'], interests: ['wellness', 'foodie', 'community events'],
+      chat: { greeting: "Hi! 👋 Lovely to meet a neighbour.", quickReplies: [ { label: "You teach yoga?", response: "I do! Thinking of a Sunday class in the lounge — you'd be welcome 🧘‍♀️" }, { label: "What are you cooking lately?", response: "Big into Korean food right now. Made kimchi jjigae last night!" }, { label: "Coffee order?", response: "Oat flat white, every single day. No notes ☕" } ], closer: "Come to yoga, stay for coffee — I'd love that!" },
+    },
+    {
+      p: 0, email: 'noah.reid@example.ca', firstName: 'Noah', lastName: 'Reid', unit: '622', img: 52, open: true, moveIn: '2025-01-30', spot: 'Fitness room',
+      bio: 'Gym rat and meal-prep enthusiast. Coffee before, protein after.',
+      hobbies: ['fitness', 'cooking', 'coffee'], interests: ['fitness', 'foodie', 'wellness'],
+      chat: { greeting: "Yo! 👋 What's good, neighbour?", quickReplies: [ { label: "Gym in the building any good?", response: "Solid setup! I'm there 6am most days if you want a spotter 💪" }, { label: "Meal prep tips?", response: "Cook once, eat five times. Sunday is chicken-and-rice day, always." }, { label: "Pre-workout coffee?", response: "Double espresso, no exceptions. Fuel ☕" } ], closer: "Hit me up for a gym session anytime — always better with a partner!" },
+    },
+    {
+      p: 0, email: 'sophie.dubois@example.ca', firstName: 'Sophie', lastName: 'Dubois', unit: '210', img: 26, open: true, moveIn: '2024-10-22', spot: 'Community garden',
+      bio: 'Gardener and baker. Hiking on weekends when the weather cooperates.',
+      hobbies: ['gardening', 'hiking', 'cooking'], interests: ['sustainability', 'outdoors', 'foodie'],
+      chat: { greeting: "Hi! 👋 So nice to meet you.", quickReplies: [ { label: "What's in the garden?", response: "Tomatoes and way too much mint. Come grab some 🌿" }, { label: "Weekend hikes?", response: "Love the Canmore trails. Slow pace, lots of photo stops!" }, { label: "You bake?", response: "Sourdough obsessive. My starter has a name. Don't judge 🍞" } ], closer: "Fresh veggies or fresh bread — you know where to find me!" },
+    },
+    {
+      p: 0, email: 'marcus.lee@example.ca', firstName: 'Marcus', lastName: 'Lee', unit: '505', img: 54, open: true, moveIn: '2025-03-22', spot: 'Lobby lounge',
+      bio: 'Photographer and live-music devotee. Always chasing good light and good gigs.',
+      hobbies: ['photography', 'live music', 'coffee'], interests: ['arts & crafts', 'local music scene', 'foodie'],
+      chat: { greeting: "Hey 👋 Good to meet you!", quickReplies: [ { label: "What do you shoot?", response: "Street and film photography mostly. This city has great light 📷" }, { label: "Catch good shows?", response: "Every weekend if I can. I keep a gig list — want in?" }, { label: "Coffee person?", response: "The ritual matters as much as the caffeine ☕" } ], closer: "Next gig or golden-hour walk, I'll give you a shout!" },
+    },
+    {
+      p: 1, email: 'ava.thompson@example.ca', firstName: 'Ava', lastName: 'Thompson', unit: '304', img: 27, open: true, moveIn: '2025-02-05', spot: 'Reading nook',
+      bio: 'Runner and coffee addict. Weekend hikes are my therapy.',
+      hobbies: ['running', 'coffee', 'hiking', 'fitness'], interests: ['fitness', 'outdoors', 'wellness'],
+      chat: { greeting: "Hi neighbour! 👋", quickReplies: [ { label: "Where do you run?", response: "River pathway loop, rain or shine. Want a buddy?" }, { label: "Coffee after?", response: "Always. Earned it, right? ☕" }, { label: "Favourite hike?", response: "Ha Ling if I'm feeling brave. The view is unreal." } ], closer: "Run, hike, coffee — pick any and I'm in!" },
+    },
+    {
+      p: 1, email: 'james.carter@example.ca', firstName: 'James', lastName: 'Carter', unit: '511', img: 55, open: true, moveIn: '2024-12-11', spot: 'Games lounge',
+      bio: 'Board-gamer and home cook. Coffee keeps the game nights going.',
+      hobbies: ['board games', 'cooking', 'coffee'], interests: ['community events', 'foodie', 'technology'],
+      chat: { greeting: "Hey! 👋 You into games?", quickReplies: [ { label: "What do you play?", response: "Heavy euro games. Terraforming Mars is my jam 🚀" }, { label: "You cook too?", response: "Game-night snacks are my specialty. Nachos incoming." }, { label: "Coffee for late nights?", response: "How else do you survive a 3-hour board game? ☕" } ], closer: "Come to the next game night — bring your appetite!" },
+    },
+    {
+      p: 1, email: 'mia.robinson@example.ca', firstName: 'Mia', lastName: 'Robinson', unit: '208', img: 28, open: true, moveIn: '2025-04-18', spot: 'Yoga corner',
+      bio: 'Yoga and gardening keep me sane. Coffee keeps me moving.',
+      hobbies: ['yoga', 'gardening', 'coffee'], interests: ['wellness', 'sustainability', 'community events'],
+      chat: { greeting: "Hi! 👋 Great to meet you.", quickReplies: [ { label: "Yoga in the building?", response: "I do a quiet morning flow — join anytime 🧘‍♀️" }, { label: "You garden?", response: "Balcony herbs and a stubborn tomato plant. Progress!" }, { label: "Coffee order?", response: "Cortado. Small but mighty ☕" } ], closer: "Morning yoga then coffee — the dream, honestly!" },
+    },
+    {
+      p: 1, email: 'lucas.brown@example.ca', firstName: 'Lucas', lastName: 'Brown', unit: '619', img: 56, open: true, moveIn: '2025-01-09', spot: 'Fitness room',
+      bio: 'Cyclist and gym-goer. Cooking big batches to fuel the miles.',
+      hobbies: ['cycling', 'fitness', 'cooking'], interests: ['fitness', 'outdoors', 'foodie'],
+      chat: { greeting: "Hey! 👋 What's up?", quickReplies: [ { label: "You cycle a lot?", response: "Weekends I'm out on the pathways for hours. Come ride!" }, { label: "Gym regular?", response: "Every other day. Legs day is a lifestyle unfortunately 😅" }, { label: "Meal prep?", response: "Big batches Sundays. Carbs are a cyclist's best friend." } ], closer: "Ride or gym, either way let's move sometime!" },
+    },
+    {
+      p: 1, email: 'grace.wilson@example.ca', firstName: 'Grace', lastName: 'Wilson', unit: '412', img: 30, open: true, moveIn: '2024-11-28', spot: 'Café corner',
+      bio: 'Coffee, books, and the occasional pottery class.',
+      hobbies: ['coffee', 'book club', 'pottery'], interests: ['arts & crafts', 'wellness', 'community events'],
+      chat: { greeting: "Hi! 👋 Nice to meet a neighbour.", quickReplies: [ { label: "Book club here?", response: "Trying to start one! First pick's a cozy mystery 📚" }, { label: "You do pottery?", response: "Weekly class — my mugs are lopsided but loved 🏺" }, { label: "Coffee spot?", response: "The corner café is my second home ☕" } ], closer: "Books, clay, or coffee — come hang!" },
+    },
+    {
+      p: 2, email: 'oliver.scott@example.ca', firstName: 'Oliver', lastName: 'Scott', unit: '207', img: 62, open: true, moveIn: '2025-03-05', spot: 'Bike storage',
+      bio: 'Cyclist, coffee fiend, live-music regular on Whyte.',
+      hobbies: ['cycling', 'coffee', 'live music'], interests: ['local music scene', 'outdoors', 'foodie'],
+      chat: { greeting: "Hey! 👋 New to Whyte?", quickReplies: [ { label: "You cycle?", response: "Commute by bike year-round. Yes, even winter. Send help ❄️🚲" }, { label: "Good coffee nearby?", response: "The spot by the theatre knows my order. That's love ☕" }, { label: "Live music?", response: "Whyte's the best for it — I'm out most weekends 🎶" } ], closer: "Ride, coffee, or a show — Whyte's got it all, come along!" },
+    },
+    {
+      p: 2, email: 'ella.young@example.ca', firstName: 'Ella', lastName: 'Young', unit: '410', img: 31, open: true, moveIn: '2025-02-19', spot: 'Rooftop deck',
+      bio: 'Hiker and home cook. Astronomy nerd on clear nights.',
+      hobbies: ['hiking', 'cooking', 'astronomy'], interests: ['outdoors', 'foodie', 'wellness'],
+      chat: { greeting: "Hi! 👋 So nice to meet you.", quickReplies: [ { label: "Favourite hike?", response: "River valley trails, endless and gorgeous. You?" }, { label: "What do you cook?", response: "Comfort food, always. Big pots of soup in winter 🍲" }, { label: "Astronomy?", response: "Rooftop with a telescope on clear nights. Saturn's rings are unreal 🔭" } ], closer: "Hike by day, stargaze by night — join me sometime 🌌" },
+    },
   ]
 
   const users = []
