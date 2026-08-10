@@ -32,7 +32,7 @@ async function main() {
   console.log('Connected to', process.env.DB_NAME)
 
   // ---- reset ----
-  for (const c of ['properties', 'users', 'userProfiles', 'connections', 'messages', 'reports', 'eventIdeas']) {
+  for (const c of ['properties', 'users', 'userProfiles', 'connections', 'messages', 'reports', 'eventIdeas', 'viewingFeedback']) {
     await db.collection(c).deleteMany({})
   }
 
@@ -299,6 +299,79 @@ async function main() {
         closer: "Morning hike or rooftop yoga — either way, Willow and I would love the company 🌄",
       },
     },
+        // ---- extra residents for richer hobby/interest data ----
+    {
+      p: 0, email: 'ethan.walsh@example.ca', firstName: 'Ethan', lastName: 'Walsh', unit: '308', img: 3, open: true, moveIn: '2025-02-14', spot: 'Café corner',
+      bio: 'Coffee snob and weekend hiker. Training for my first half-marathon.',
+      hobbies: ['coffee', 'hiking', 'running', 'fitness'], interests: ['outdoors', 'wellness', 'fitness'],
+      chat: { greeting: "Hey! 👋 New here — where's the good coffee at?", quickReplies: [ { label: "Favourite trail nearby?", response: "Prairie Mountain if I've got the legs for it. You hike?" }, { label: "Training for anything?", response: "Half-marathon in spring. Currently questioning every life choice 😅" }, { label: "Best coffee spot?", response: "Rosso, hands down. I'm there most mornings ☕" } ], closer: "Let's grab a coffee then maybe a trail run — my kind of weekend!" },
+    },
+    {
+      p: 0, email: 'chloe.martin@example.ca', firstName: 'Chloe', lastName: 'Martin', unit: '415', img: 24, open: true, moveIn: '2025-04-08', spot: 'Yoga studio',
+      bio: 'Yoga teacher, coffee lover, always cooking something new.',
+      hobbies: ['yoga', 'coffee', 'cooking'], interests: ['wellness', 'foodie', 'community events'],
+      chat: { greeting: "Hi! 👋 Lovely to meet a neighbour.", quickReplies: [ { label: "You teach yoga?", response: "I do! Thinking of a Sunday class in the lounge — you'd be welcome 🧘‍♀️" }, { label: "What are you cooking lately?", response: "Big into Korean food right now. Made kimchi jjigae last night!" }, { label: "Coffee order?", response: "Oat flat white, every single day. No notes ☕" } ], closer: "Come to yoga, stay for coffee — I'd love that!" },
+    },
+    {
+      p: 0, email: 'noah.reid@example.ca', firstName: 'Noah', lastName: 'Reid', unit: '622', img: 52, open: true, moveIn: '2025-01-30', spot: 'Fitness room',
+      bio: 'Gym rat and meal-prep enthusiast. Coffee before, protein after.',
+      hobbies: ['fitness', 'cooking', 'coffee'], interests: ['fitness', 'foodie', 'wellness'],
+      chat: { greeting: "Yo! 👋 What's good, neighbour?", quickReplies: [ { label: "Gym in the building any good?", response: "Solid setup! I'm there 6am most days if you want a spotter 💪" }, { label: "Meal prep tips?", response: "Cook once, eat five times. Sunday is chicken-and-rice day, always." }, { label: "Pre-workout coffee?", response: "Double espresso, no exceptions. Fuel ☕" } ], closer: "Hit me up for a gym session anytime — always better with a partner!" },
+    },
+    {
+      p: 0, email: 'sophie.dubois@example.ca', firstName: 'Sophie', lastName: 'Dubois', unit: '210', img: 26, open: true, moveIn: '2024-10-22', spot: 'Community garden',
+      bio: 'Gardener and baker. Hiking on weekends when the weather cooperates.',
+      hobbies: ['gardening', 'hiking', 'cooking'], interests: ['sustainability', 'outdoors', 'foodie'],
+      chat: { greeting: "Hi! 👋 So nice to meet you.", quickReplies: [ { label: "What's in the garden?", response: "Tomatoes and way too much mint. Come grab some 🌿" }, { label: "Weekend hikes?", response: "Love the Canmore trails. Slow pace, lots of photo stops!" }, { label: "You bake?", response: "Sourdough obsessive. My starter has a name. Don't judge 🍞" } ], closer: "Fresh veggies or fresh bread — you know where to find me!" },
+    },
+    {
+      p: 0, email: 'marcus.lee@example.ca', firstName: 'Marcus', lastName: 'Lee', unit: '505', img: 54, open: true, moveIn: '2025-03-22', spot: 'Lobby lounge',
+      bio: 'Photographer and live-music devotee. Always chasing good light and good gigs.',
+      hobbies: ['photography', 'live music', 'coffee'], interests: ['arts & crafts', 'local music scene', 'foodie'],
+      chat: { greeting: "Hey 👋 Good to meet you!", quickReplies: [ { label: "What do you shoot?", response: "Street and film photography mostly. This city has great light 📷" }, { label: "Catch good shows?", response: "Every weekend if I can. I keep a gig list — want in?" }, { label: "Coffee person?", response: "The ritual matters as much as the caffeine ☕" } ], closer: "Next gig or golden-hour walk, I'll give you a shout!" },
+    },
+    {
+      p: 1, email: 'ava.thompson@example.ca', firstName: 'Ava', lastName: 'Thompson', unit: '304', img: 27, open: true, moveIn: '2025-02-05', spot: 'Reading nook',
+      bio: 'Runner and coffee addict. Weekend hikes are my therapy.',
+      hobbies: ['running', 'coffee', 'hiking', 'fitness'], interests: ['fitness', 'outdoors', 'wellness'],
+      chat: { greeting: "Hi neighbour! 👋", quickReplies: [ { label: "Where do you run?", response: "River pathway loop, rain or shine. Want a buddy?" }, { label: "Coffee after?", response: "Always. Earned it, right? ☕" }, { label: "Favourite hike?", response: "Ha Ling if I'm feeling brave. The view is unreal." } ], closer: "Run, hike, coffee — pick any and I'm in!" },
+    },
+    {
+      p: 1, email: 'james.carter@example.ca', firstName: 'James', lastName: 'Carter', unit: '511', img: 55, open: true, moveIn: '2024-12-11', spot: 'Games lounge',
+      bio: 'Board-gamer and home cook. Coffee keeps the game nights going.',
+      hobbies: ['board games', 'cooking', 'coffee'], interests: ['community events', 'foodie', 'technology'],
+      chat: { greeting: "Hey! 👋 You into games?", quickReplies: [ { label: "What do you play?", response: "Heavy euro games. Terraforming Mars is my jam 🚀" }, { label: "You cook too?", response: "Game-night snacks are my specialty. Nachos incoming." }, { label: "Coffee for late nights?", response: "How else do you survive a 3-hour board game? ☕" } ], closer: "Come to the next game night — bring your appetite!" },
+    },
+    {
+      p: 1, email: 'mia.robinson@example.ca', firstName: 'Mia', lastName: 'Robinson', unit: '208', img: 28, open: true, moveIn: '2025-04-18', spot: 'Yoga corner',
+      bio: 'Yoga and gardening keep me sane. Coffee keeps me moving.',
+      hobbies: ['yoga', 'gardening', 'coffee'], interests: ['wellness', 'sustainability', 'community events'],
+      chat: { greeting: "Hi! 👋 Great to meet you.", quickReplies: [ { label: "Yoga in the building?", response: "I do a quiet morning flow — join anytime 🧘‍♀️" }, { label: "You garden?", response: "Balcony herbs and a stubborn tomato plant. Progress!" }, { label: "Coffee order?", response: "Cortado. Small but mighty ☕" } ], closer: "Morning yoga then coffee — the dream, honestly!" },
+    },
+    {
+      p: 1, email: 'lucas.brown@example.ca', firstName: 'Lucas', lastName: 'Brown', unit: '619', img: 56, open: true, moveIn: '2025-01-09', spot: 'Fitness room',
+      bio: 'Cyclist and gym-goer. Cooking big batches to fuel the miles.',
+      hobbies: ['cycling', 'fitness', 'cooking'], interests: ['fitness', 'outdoors', 'foodie'],
+      chat: { greeting: "Hey! 👋 What's up?", quickReplies: [ { label: "You cycle a lot?", response: "Weekends I'm out on the pathways for hours. Come ride!" }, { label: "Gym regular?", response: "Every other day. Legs day is a lifestyle unfortunately 😅" }, { label: "Meal prep?", response: "Big batches Sundays. Carbs are a cyclist's best friend." } ], closer: "Ride or gym, either way let's move sometime!" },
+    },
+    {
+      p: 1, email: 'grace.wilson@example.ca', firstName: 'Grace', lastName: 'Wilson', unit: '412', img: 30, open: true, moveIn: '2024-11-28', spot: 'Café corner',
+      bio: 'Coffee, books, and the occasional pottery class.',
+      hobbies: ['coffee', 'book club', 'pottery'], interests: ['arts & crafts', 'wellness', 'community events'],
+      chat: { greeting: "Hi! 👋 Nice to meet a neighbour.", quickReplies: [ { label: "Book club here?", response: "Trying to start one! First pick's a cozy mystery 📚" }, { label: "You do pottery?", response: "Weekly class — my mugs are lopsided but loved 🏺" }, { label: "Coffee spot?", response: "The corner café is my second home ☕" } ], closer: "Books, clay, or coffee — come hang!" },
+    },
+    {
+      p: 2, email: 'oliver.scott@example.ca', firstName: 'Oliver', lastName: 'Scott', unit: '207', img: 62, open: true, moveIn: '2025-03-05', spot: 'Bike storage',
+      bio: 'Cyclist, coffee fiend, live-music regular on Whyte.',
+      hobbies: ['cycling', 'coffee', 'live music'], interests: ['local music scene', 'outdoors', 'foodie'],
+      chat: { greeting: "Hey! 👋 New to Whyte?", quickReplies: [ { label: "You cycle?", response: "Commute by bike year-round. Yes, even winter. Send help ❄️🚲" }, { label: "Good coffee nearby?", response: "The spot by the theatre knows my order. That's love ☕" }, { label: "Live music?", response: "Whyte's the best for it — I'm out most weekends 🎶" } ], closer: "Ride, coffee, or a show — Whyte's got it all, come along!" },
+    },
+    {
+      p: 2, email: 'ella.young@example.ca', firstName: 'Ella', lastName: 'Young', unit: '410', img: 31, open: true, moveIn: '2025-02-19', spot: 'Rooftop deck',
+      bio: 'Hiker and home cook. Astronomy nerd on clear nights.',
+      hobbies: ['hiking', 'cooking', 'astronomy'], interests: ['outdoors', 'foodie', 'wellness'],
+      chat: { greeting: "Hi! 👋 So nice to meet you.", quickReplies: [ { label: "Favourite hike?", response: "River valley trails, endless and gorgeous. You?" }, { label: "What do you cook?", response: "Comfort food, always. Big pots of soup in winter 🍲" }, { label: "Astronomy?", response: "Rooftop with a telescope on clear nights. Saturn's rings are unreal 🔭" } ], closer: "Hike by day, stargaze by night — join me sometime 🌌" },
+    },
   ]
 
   const users = []
@@ -319,30 +392,72 @@ async function main() {
     })
   }
 
-  // ---- staff ----
-  const S = [
-    { p: 0, email: 'demo.staff@residenthub.ca', firstName: 'Sarah', lastName: 'Mitchell', img: 48 },
-    { p: 1, email: 'david.chen@residenthub.ca', firstName: 'David', lastName: 'Chen', img: 59 },
-    { p: 2, email: 'rachel.nguyen@residenthub.ca', firstName: 'Rachel', lastName: 'Nguyen', img: 45 },
+  // ---- property management hierarchy: RPMs + APMs ----
+  const rpmDefs = [
+    { email: 'demo.rpm@residenthub.ca', firstName: 'Priya', lastName: 'Sharma', img: 31 },
+    { email: 'marcus.leblanc@residenthub.ca', firstName: 'Marcus', lastName: 'Leblanc', img: 52 },
   ]
-  const sid = []
-  for (const s of S) {
-    const _id = new ObjectId()
-    sid.push(_id)
-    users.push({
-      _id, propertyId: P[s.p], email: s.email, passwordHash: 'demo',
-      firstName: s.firstName, lastName: s.lastName, unitNumber: 'Staff',
-      isOpenToMeeting: false, role: 'STAFF', createdAt: daysAgo(200),
-      chatScript: null,
-    })
-    profiles.push({
-      _id: new ObjectId(), userId: _id, bio: 'Community manager', hobbies: [], interests: [],
-      photoUrl: `https://i.pravatar.cc/400?img=${s.img}`, moveInDate: daysAgo(200), favoriteSpotInBuilding: 'Front office',
-    })
+  const rpmIds = []
+  for (const r of rpmDefs) {
+    const _id = new ObjectId(); rpmIds.push(_id)
+    users.push({ _id, propertyId: null, email: r.email, passwordHash: 'demo', firstName: r.firstName, lastName: r.lastName, unitNumber: 'Regional office', isOpenToMeeting: false, role: 'RPM', managedByRpmId: null, createdAt: daysAgo(220), chatScript: null })
+    profiles.push({ _id: new ObjectId(), userId: _id, bio: 'Regional Property Manager', hobbies: [], interests: [], photoUrl: `https://i.pravatar.cc/400?img=${r.img}`, moveInDate: daysAgo(220), favoriteSpotInBuilding: 'Regional office' })
   }
+
+  // APMs: 2 per property, 3 per RPM. target = desired overall average.
+  const apmDefs = [
+    { email: 'demo.apm@residenthub.ca',      firstName: 'Sarah',  lastName: 'Mitchell', img: 48, p: 0, rpm: 0, target: 4.6 },
+    { email: 'david.chen@residenthub.ca',    firstName: 'David',  lastName: 'Chen',     img: 59, p: 0, rpm: 1, target: 4.4 },
+    { email: 'rachel.nguyen@residenthub.ca', firstName: 'Rachel', lastName: 'Nguyen',   img: 45, p: 1, rpm: 0, target: 3.2 },
+    { email: 'tyler.brooks@residenthub.ca',  firstName: 'Tyler',  lastName: 'Brooks',   img: 12, p: 1, rpm: 1, target: 4.3 },
+    { email: 'megan.oconnor@residenthub.ca', firstName: 'Megan',  lastName: "O'Connor", img: 24, p: 2, rpm: 0, target: 3.3 },
+    { email: 'aisha.patel@residenthub.ca',   firstName: 'Aisha',  lastName: 'Patel',    img: 27, p: 2, rpm: 1, target: 4.8 },
+  ]
+  const apmMeta = []
+  for (const a of apmDefs) {
+    const _id = new ObjectId(); apmMeta.push({ id: _id, p: a.p, target: a.target })
+    users.push({ _id, propertyId: P[a.p], email: a.email, passwordHash: 'demo', firstName: a.firstName, lastName: a.lastName, unitNumber: 'Leasing office', isOpenToMeeting: false, role: 'APM', managedByRpmId: rpmIds[a.rpm], createdAt: daysAgo(210), chatScript: null })
+    profiles.push({ _id: new ObjectId(), userId: _id, bio: 'Assistant Property Manager', hobbies: [], interests: [], photoUrl: `https://i.pravatar.cc/400?img=${a.img}`, moveInDate: daysAgo(210), favoriteSpotInBuilding: 'Leasing office' })
+  }
+
+  // Keep existing event/report references working: one APM id per property index.
+  const sid = [
+    apmMeta.find(m => m.p === 0).id,
+    apmMeta.find(m => m.p === 1).id,
+    apmMeta.find(m => m.p === 2).id,
+  ]
 
   await db.collection('users').insertMany(users)
   await db.collection('userProfiles').insertMany(profiles)
+
+  // ---- viewing feedback (mock prospective-tenant ratings) ----
+  const prospectNames = ['Jordan Blackwood', 'Chloe Fontaine', 'Aiden Wong', 'Maya Desjardins', 'Ethan Reid', 'Priya Kaur', 'Liam Fraser', 'Sofia Marchetti', 'Nathan Boucher', 'Grace Kim', 'Owen Sinclair', 'Hannah Leblanc', 'Dylan Chretien', 'Zoe Armstrong', 'Cole Tremblay', 'Ruby Nakamura', 'Aaron Gill', 'Layla Haddad', 'Spencer Reid', 'Nora Bergeron']
+  const goodComments = ['So warm and welcoming — felt like home right away.', 'Answered every question about the building. Super knowledgeable.', 'Professional and friendly, made the tour easy.', 'Great communicator, followed up the same day.', 'Really lovely experience, no pressure at all.', 'Knew the neighbourhood inside out. Impressed!']
+  const midComments = ['Nice enough, but felt a little rushed.', 'Friendly, though I had to follow up a couple times.', 'Good tour overall, a few questions went unanswered.', 'Pleasant, but communication could be tighter.']
+  const lowComments = ['Felt rushed and hard to reach afterwards.', 'Seemed unprepared for my questions.', 'Communication was slow — took days to reply.', 'Polite but not very informative about the suite.']
+  const clamp5 = (n) => Math.max(1, Math.min(5, n))
+  const genScore = (t) => clamp5(Math.round(t + (Math.random() * 1.4 - 0.7)))
+  const feedbackDocs = []
+  apmMeta.forEach((m) => {
+    for (let i = 0; i < 12; i++) {
+      const scores = {
+        friendliness: genScore(m.target + 0.2),
+        professionalism: genScore(m.target),
+        knowledge: genScore(m.target - 0.1),
+        communication: genScore(m.target - (m.target < 3.5 ? 0.4 : 0)),
+        overallExperience: genScore(m.target),
+      }
+      const avg = (scores.friendliness + scores.professionalism + scores.knowledge + scores.communication + scores.overallExperience) / 5
+      const pool = avg >= 4 ? goodComments : avg >= 3.4 ? midComments : lowComments
+      feedbackDocs.push({
+        _id: new ObjectId(), apmId: m.id, propertyId: P[m.p],
+        prospectName: prospectNames[(i + m.p * 3) % prospectNames.length],
+        scores, comment: pool[Math.floor(Math.random() * pool.length)],
+        createdAt: daysAgo(Math.floor(Math.random() * 90)),
+      })
+    }
+  })
+  await db.collection('viewingFeedback').insertMany(feedbackDocs)
 
   // ---- connections ----
   const accepted = [
@@ -440,8 +555,12 @@ async function main() {
   await db.collection('connections').createIndex({ userAId: 1, userBId: 1 }, { unique: true })
   await db.collection('messages').createIndex({ connectionId: 1, timestamp: -1 })
   await db.collection('reports').createIndex({ status: 1, createdAt: -1 })
+  await db.collection('users').createIndex({ managedByRpmId: 1 })
+  await db.collection('viewingFeedback').createIndex({ apmId: 1, createdAt: -1 })
 
-  console.log(`Seeded: ${props.length} properties, ${users.length} users (${R.length} residents + ${S.length} staff), ${connDocs.length} connections, ${msgDocs.length} messages, ${reports.length} reports, ${events.length} events. chatScript added to all ${R.length} residents.`)
+  console.log(`Seeded management: ${rpmDefs.length} RPMs, ${apmDefs.length} APMs, ${feedbackDocs.length} viewing feedback entries.`)
+
+  console.log(`Seeded: ${props.length} properties, ${users.length} users (${R.length} residents + ${rpmDefs.length} RPMs + ${apmDefs.length} APMs), ${connDocs.length} connections, ${msgDocs.length} messages, ${reports.length} reports, ${events.length} events. chatScript added to all ${R.length} residents.`)
   await client.close()
   process.exit(0)
 }

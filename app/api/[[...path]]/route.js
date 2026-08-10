@@ -87,12 +87,13 @@ async function handleRoute(request, { params }) {
     // ================= AUTH =================
     if (route === '/auth/sso' && method === 'POST') {
       const body = await request.json().catch(() => ({}))
-      const role = body.role === 'STAFF' ? 'STAFF' : 'RESIDENT'
-      const demoEmail = role === 'STAFF' ? 'demo.staff@residenthub.ca' : 'demo.resident@residenthub.ca'
+      const roleMap = { APM: 'demo.apm@residenthub.ca', RPM: 'demo.rpm@residenthub.ca', RESIDENT: 'demo.resident@residenthub.ca' }
+      const role = ['APM', 'RPM', 'RESIDENT'].includes(body.role) ? body.role : 'RESIDENT'
+      const demoEmail = roleMap[role]
       let user = await db.collection('users').findOne({ email: demoEmail })
       if (!user) user = await db.collection('users').findOne({ role })
       if (!user) return json({ error: 'No seeded user found. Run the seed script.' }, 404)
-      const token = signSession({ userId: user._id.toString(), role: user.role, propertyId: user.propertyId.toString() })
+      const token = signSession({ userId: user._id.toString(), role: user.role, propertyId: user.propertyId ? user.propertyId.toString() : null })
       const res = json({ user: ser(user) })
       res.cookies.set(SESSION_COOKIE, token, { httpOnly: true, sameSite: 'lax', path: '/', maxAge: 60 * 60 * 24 * 7 })
       return res

@@ -2,7 +2,7 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
-import { Home, User, ShieldCheck, Loader2, Info } from 'lucide-react'
+import { Home, User, ShieldCheck, Loader2, Info, ChevronDown, Building2, UserCog } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { MotionFade } from '@/components/MotionFade'
@@ -10,6 +10,7 @@ import { MotionFade } from '@/components/MotionFade'
 export default function LoginPage() {
   const router = useRouter()
   const [loading, setLoading] = useState(null)
+  const [showStaff, setShowStaff] = useState(false)
 
   const signIn = async (role) => {
     setLoading(role)
@@ -22,7 +23,7 @@ export default function LoginPage() {
       })
       const data = await res.json()
       if (!res.ok) throw new Error(data.error)
-      router.push(role === 'STAFF' ? '/staff' : '/dashboard')
+      router.push(role === 'RPM' ? '/rpm' : role === 'APM' ? '/apm' : '/dashboard')
     } catch (e) {
       setLoading(null)
     }
@@ -50,10 +51,27 @@ export default function LoginPage() {
                 {loading === 'RESIDENT' ? <Loader2 className="h-5 w-5 animate-spin mr-3" /> : <User className="h-5 w-5 mr-3" />}
                 Continue as Resident
               </Button>
-              <Button onClick={() => signIn('STAFF')} disabled={loading} variant="outline" className="w-full h-14 rounded-2xl border-2 border-secondary text-secondary hover:bg-secondary hover:text-white text-base justify-start px-5">
-                {loading === 'STAFF' ? <Loader2 className="h-5 w-5 animate-spin mr-3" /> : <ShieldCheck className="h-5 w-5 mr-3" />}
-                Continue as Staff
-              </Button>
+
+              <div>
+                <Button onClick={() => setShowStaff(v => !v)} disabled={loading} variant="outline" className="w-full h-14 rounded-2xl border-2 border-secondary text-secondary hover:bg-secondary hover:text-white text-base justify-start px-5">
+                  <ShieldCheck className="h-5 w-5 mr-3" />
+                  Continue as Staff
+                  <ChevronDown className={`h-4 w-4 ml-auto transition-transform ${showStaff ? 'rotate-180' : ''}`} />
+                </Button>
+
+                {showStaff ? (
+                  <div className="mt-2 space-y-2 pl-1">
+                    <Button onClick={() => signIn('APM')} disabled={loading} variant="ghost" className="w-full h-12 rounded-xl justify-start px-5 bg-muted hover:bg-accent hover:text-flamingo">
+                      {loading === 'APM' ? <Loader2 className="h-4 w-4 animate-spin mr-3" /> : <UserCog className="h-4 w-4 mr-3" />}
+                      Continue as APM <span className="ml-auto text-xs text-muted-foreground">Assistant PM</span>
+                    </Button>
+                    <Button onClick={() => signIn('RPM')} disabled={loading} variant="ghost" className="w-full h-12 rounded-xl justify-start px-5 bg-muted hover:bg-accent hover:text-flamingo">
+                      {loading === 'RPM' ? <Loader2 className="h-4 w-4 animate-spin mr-3" /> : <Building2 className="h-4 w-4 mr-3" />}
+                      Continue as RPM <span className="ml-auto text-xs text-muted-foreground">Regional PM</span>
+                    </Button>
+                  </div>
+                ) : null}
+              </div>
             </div>
 
             <div className="mt-7 flex items-start gap-2 rounded-2xl bg-muted px-4 py-3 text-xs text-muted-foreground">
