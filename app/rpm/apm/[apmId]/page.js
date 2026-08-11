@@ -5,6 +5,7 @@ import { ArrowLeft, Loader2, Star } from 'lucide-react'
 import { AppShell } from '@/components/AppShell'
 import { MotionFade } from '@/components/MotionFade'
 import { EmptyState } from '@/components/EmptyState'
+import { RadarChart } from '@/components/charts/RadarChart'
 import { Card, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
@@ -24,7 +25,10 @@ function ApmDetailInner() {
   }, [params.apmId])
 
   if (d === undefined) return <div className="flex justify-center py-24"><Loader2 className="h-6 w-6 animate-spin text-flamingo" /></div>
-  if (!d) return <EmptyState title="Not available" message="You can only view APMs you manage." action={<Button variant="outline" className="rounded-xl" onClick={() => router.push('/rpm')}>Back to overview</Button>} />
+  if (!d) return <div className="py-24 text-center"><Button variant="outline" className="rounded-xl" onClick={() => router.push('/rpm')}>Back to overview</Button></div>
+
+  const indicators = CAT_LABELS.map(([k, label]) => ({ name: label, max: 5 }))
+  const radarValues = CAT_LABELS.map(([k]) => d.categories[k])
 
   return (
     <MotionFade>
@@ -41,7 +45,7 @@ function ApmDetailInner() {
         </div>
       </div>
 
-      <div className="grid grid-cols-2 md:grid-cols-5 gap-3 mb-8">
+      <div className="grid grid-cols-2 md:grid-cols-5 gap-3 mb-6">
         {CAT_LABELS.map(([k, label]) => (
           <Card key={k} className="rounded-2xl border-nobel/40 shadow-soft">
             <CardContent className="p-4 text-center">
@@ -51,6 +55,16 @@ function ApmDetailInner() {
           </Card>
         ))}
       </div>
+
+      <MotionFade delay={0.1}>
+        <Card className="rounded-2xl border-nobel/40 shadow-soft mb-8">
+          <CardContent className="p-6">
+            <h3 className="font-display text-lg font-semibold text-secondary mb-1">Category breakdown</h3>
+            <p className="text-sm text-muted-foreground">Visual profile across the five rated areas</p>
+            <RadarChart indicators={indicators} values={radarValues} />
+          </CardContent>
+        </Card>
+      </MotionFade>
 
       <Card className="rounded-2xl border-nobel/40 shadow-soft overflow-hidden">
         <CardContent className="p-0">
