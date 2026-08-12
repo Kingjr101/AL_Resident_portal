@@ -15,6 +15,7 @@ const NAV = {
   RESIDENT: [
     { href: '/dashboard', label: 'Dashboard' },
     { href: '/discover', label: 'Discover' },
+    { href: '/community-board', label: 'Community Board', accent: true },
   ],
   APM: [
     { href: '/apm', label: 'My Dashboard' },
@@ -83,6 +84,17 @@ export function AppShell({ requireRole, children }) {
             <nav className="hidden md:flex items-center gap-1">
               {nav.map(item => {
                 const active = pathname === item.href || (item.href !== homeHref && pathname.startsWith(item.href))
+                if (item.accent) {
+                  return (
+                    <Link key={item.href} href={item.href}
+                      className={cn(
+                        'px-3 py-2 rounded-lg text-sm font-semibold transition-colors',
+                        active ? 'bg-secondary text-white' : 'bg-secondary/10 text-secondary hover:bg-secondary hover:text-white'
+                      )}>
+                      {item.label}
+                    </Link>
+                  )
+                }
                 return (
                   <Link key={item.href} href={item.href}
                     className={cn(

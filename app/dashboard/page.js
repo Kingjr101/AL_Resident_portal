@@ -1,7 +1,7 @@
 'use client'
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
-import { Users, CalendarHeart, UserPlus, MapPin, ArrowRight, Sparkles } from 'lucide-react'
+import { Users, CalendarHeart, UserPlus, MapPin, ArrowRight, Sparkles, Megaphone } from 'lucide-react'
 import { AppShell } from '@/components/AppShell'
 import { PageHeader } from '@/components/PageHeader'
 import { ConsentBanner } from '@/components/ConsentBanner'
@@ -34,8 +34,17 @@ function DashboardInner() {
       <PageHeader
         eyebrow={building}
         title={`Welcome back${firstName ? ', ' + firstName : ''}`}
-        subtitle="Here’s what’s happening in your community this week."
-        action={<Button asChild className="bg-flamingo hover:bg-flamingo/90 rounded-xl"><Link href="/discover">Discover neighbours <ArrowRight className="h-4 w-4 ml-1.5" /></Link></Button>}
+        subtitle="Here's what's happening in your community this week."
+        action={
+          <div className="flex flex-col sm:flex-row gap-2">
+            <Button asChild className="bg-flamingo hover:bg-flamingo/90 rounded-xl">
+              <Link href="/discover">Discover neighbours <ArrowRight className="h-4 w-4 ml-1.5" /></Link>
+            </Button>
+            <Button asChild className="bg-secondary hover:bg-secondary/90 rounded-xl">
+              <Link href="/community-board"><Megaphone className="h-4 w-4 mr-1.5" /> Open Community Board</Link>
+            </Button>
+          </div>
+        }
       />
 
       <div className="mb-8"><ConsentBanner isOpen={me?.user?.isOpenToMeeting !== false} /></div>
@@ -49,7 +58,7 @@ function DashboardInner() {
         </div>
       </MotionFade>
       {data && data.pendingRequests.length === 0 ? (
-        <EmptyState icon={UserPlus} title="No pending requests" message="When a neighbour wants to connect, you’ll see them here." />
+        <EmptyState icon={UserPlus} title="No pending requests" message="When a neighbour wants to connect, you'll see them here." />
       ) : (
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {(data?.pendingRequests || []).map(r => (
